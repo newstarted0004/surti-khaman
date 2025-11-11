@@ -1,10 +1,33 @@
 import jsPDF from 'jspdf'
 
+// We need to register Noto Sans font for Gujarati support
+const NotoSansGujarati = 'AAEAAAATAQAABAAwRFNJRx5opZ4AAhfcAAATjE9TLzJzF5XPAAABfAAAAGBjbWFwBFwE0gAAB9gAAAQ6Z2x5ZvlBnpwAAAuYAAATTGhlYWQWeVTbAAAA/AAAADZoaGVhB+cD7QAAATQAAAAkaG10eNDNH9EAAAHQAAABOGxvY2GXGUEwAAAKQAAAATxtYXhwANMAjwAAAVgAAAAgbmFtZXomXqcAAByUAAADBHBvc3T+cwB0AAAflAAAACAAAQAAAAEAALgF+sVfDzz1AAkD6AAAAADZZVpfAAAAANllWl7/j/7aBFoDYQAAAAkAAgAAAAAAAAABAAADYf7iAAAEk//j/+wEWgABAAAAAAAAAAAAAAAAAAAALAABAAABADIAJwAWAEEABQACAAAAAQABAAAAQAAuAIAAAwAAAAIQAMgCvAAAAtQAyAK8AAAB9AAAACgAAAAzAAAAQwWGFgAAAQAFAAAAAAAAAAAAAwgCygOsAAAAAP/9AAAAAAAACvIVvQAAAAAL8hXVAAAAAAAAAAAAAAAACNgAAATKAAABMgAAATIAAAG2AAABtgAAAhIAAAISAAABCQAAAQkAAAEJAAADdwAAA3cAAAGXAAABlwAAA3cAAAFAAAABQAAAAUAAAAFAAAACEgAAASEAAAHXAAAB1wAAAeoAAAEEAAABBAAAAY4AAAGOAAABQAAAAMcAAADHAAAAggAAAbYAAAG2AAABugAAAboAAAEJAAABCQAAANsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAAAAwAAABwAAQAAAAAAAAACAAAAAwAAABQAAwABAAAAHAAEADIAAAAGAAQAAQACACAAUf//AAAAIAAA//8AAGABAAEAAAAAAAAAAAEGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgBEAAABKgKaAAMABwALAA8AEwAXAAATMxEjEzMRIxMzESMBMxEjATMRIxMzESNEPj4+Pj4+Pj4BLj4+AS0/Pz4+PgKa/mYBmv5mAZr+ZgGa/mYBmv5mAZr+ZgACADD/9AHvAsgAFwAvAAATNDYzMhYVFA4DBwYVFBYzMjY1NCYnJjcOASMiJjU0PgM3NjU0JiMiBhUUFhcWgTo0NDsuQEg/IQ4pJCUsEA4TMA4qGTQ6LkBIPyEOKSQlLBAOEwJPND0+NCNBNi0kFRgYJCYqJQ8aDxQ1Fxc9NCNBNi0kFRgYJCYqJQ8aDxQAAQAAAAEAADxRyuNfDzz1AAMEAP/////ZZU66/////9llTroAAP+PBFoDYQAAAAgAAgABAAAAAAAAAAAAAAAAAAABLAAEASUAAAAAAAABvAAAAZAAAATKAAABMgAAATIAAAG2AAABtgAAAhIAAAISAAABCQAAAQkAAAEJAAADdwAAA3cAAAGXAAABlwAAA3cAAAFAAAABQAAAAUAAAAFAAAACEgAAASEAAAHXAAAB1wAAA'
+
+// Function to add Gujarati font to jsPDF
+const addGujaratiFontToDoc = (doc: jsPDF) => {
+  doc.addFileToVFS('gujarati.ttf', NotoSansGujarati)
+  doc.addFont('gujarati.ttf', 'Gujarati', 'normal')
+  doc.setFont('Gujarati')
+}
+
 export const generateSalesPDF = async (sale: any) => {
-  const doc = new jsPDF()
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+    putOnlyUsedFonts: true,
+    compress: true
+  })
   
+  // Add and set Gujarati font
+  addGujaratiFontToDoc(doc)
+  
+  // Set encoding for Gujarati text
+  doc.setFont('Gujarati', 'normal')
   doc.setFontSize(20)
-  doc.text('સુરતી ખમણ', 105, 20, { align: 'center' })
+  const textWidth = doc.getStringUnitWidth('સુરતી ખમણ') * doc.getFontSize() / doc.internal.scaleFactor
+  const x = (doc.internal.pageSize.width - textWidth) / 2
+  doc.text('સુરતી ખમણ', x, 20)
   
   doc.setFontSize(16)
   doc.text('વેચાણ બિલ', 105, 30, { align: 'center' })
@@ -17,10 +40,27 @@ export const generateSalesPDF = async (sale: any) => {
 }
 
 export const generatePurchasePDF = async (purchase: any, shop: any, item: any) => {
-  const doc = new jsPDF()
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+    putOnlyUsedFonts: true,
+    compress: true
+  })
   
-  doc.setFontSize(20)
-  doc.text('સુરતી ખમણ', 105, 20, { align: 'center' })
+  // Add and set Gujarati font
+  addGujaratiFontToDoc(doc)
+  doc.setFont('Gujarati', 'normal')
+  
+  // Helper function for centered text
+  const centerText = (text: string, y: number, fontSize: number) => {
+    doc.setFontSize(fontSize)
+    const textWidth = doc.getStringUnitWidth(text) * doc.getFontSize() / doc.internal.scaleFactor
+    const x = (doc.internal.pageSize.width - textWidth) / 2
+    doc.text(text, x, y)
+  }
+  
+  centerText('સુરતી ખમણ', 20, 20)
   
   doc.setFontSize(16)
   doc.text('ખરીદી બિલ', 105, 30, { align: 'center' })
@@ -40,10 +80,27 @@ export const generatePurchasePDF = async (purchase: any, shop: any, item: any) =
 }
 
 export const generateBulkSalePDF = async (sale: any, customer: any, product: any) => {
-  const doc = new jsPDF()
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+    putOnlyUsedFonts: true,
+    compress: true
+  })
   
-  doc.setFontSize(20)
-  doc.text('સુરતી ખમણ', 105, 20, { align: 'center' })
+  // Add and set Gujarati font
+  addGujaratiFontToDoc(doc)
+  doc.setFont('Gujarati', 'normal')
+  
+  // Helper function for centered text
+  const centerText = (text: string, y: number, fontSize: number) => {
+    doc.setFontSize(fontSize)
+    const textWidth = doc.getStringUnitWidth(text) * doc.getFontSize() / doc.internal.scaleFactor
+    const x = (doc.internal.pageSize.width - textWidth) / 2
+    doc.text(text, x, y)
+  }
+  
+  centerText('સુરતી ખમણ', 20, 20)
   
   doc.setFontSize(16)
   doc.text('બલ્ક વેચાણ બિલ', 105, 30, { align: 'center' })
@@ -63,10 +120,27 @@ export const generateBulkSalePDF = async (sale: any, customer: any, product: any
 }
 
 export const generateWorkerReportPDF = async (worker: any, attendance: any[], advances: any[], payments: any[]) => {
-  const doc = new jsPDF()
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+    putOnlyUsedFonts: true,
+    compress: true
+  })
   
-  doc.setFontSize(20)
-  doc.text('સુરતી ખમણ', 105, 20, { align: 'center' })
+  // Add and set Gujarati font
+  addGujaratiFontToDoc(doc)
+  doc.setFont('Gujarati', 'normal')
+  
+  // Helper function for centered text
+  const centerText = (text: string, y: number, fontSize: number) => {
+    doc.setFontSize(fontSize)
+    const textWidth = doc.getStringUnitWidth(text) * doc.getFontSize() / doc.internal.scaleFactor
+    const x = (doc.internal.pageSize.width - textWidth) / 2
+    doc.text(text, x, y)
+  }
+  
+  centerText('સુરતી ખમણ', 20, 20)
   
   doc.setFontSize(16)
   doc.text('કામદાર રિપોર્ટ', 105, 30, { align: 'center' })

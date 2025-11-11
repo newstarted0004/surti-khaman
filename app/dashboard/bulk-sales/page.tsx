@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
-import { generateBulkSalePDF } from '@/lib/pdf'
+import { generateBulkSalePDF } from '@/lib/pdfN'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 export default function BulkSalesPage() {

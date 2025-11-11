@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
-import { generateSalesPDF } from '@/lib/pdf'
+import { generateSalesPDF } from '@/lib/pdfN'
 
 export default function SalesPage() {
   const [amount, setAmount] = useState('')

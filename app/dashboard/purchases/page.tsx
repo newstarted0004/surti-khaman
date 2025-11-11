@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
-import { generatePurchasePDF } from '@/lib/pdf'
+import { generatePurchasePDF } from '@/lib/pdfN'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 export default function PurchasesPage() {
